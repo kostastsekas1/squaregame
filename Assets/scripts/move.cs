@@ -1,10 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class move : MonoBehaviour
 {
-    private float speed = 2f;
+    public float speed = 2f;
+    private bool isRotating = false;
+    private int x = 1;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,40 +19,58 @@ public class move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        if (Input.GetKey(KeyCode.RightArrow)|| Input.GetKey(KeyCode.D))
-        {
-            transform.position += Vector3.right * speed * Time.deltaTime;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow)|| Input.GetKey(KeyCode.A))
-        {
-            transform.position += Vector3.left * speed * Time.deltaTime;
-        }
-       */
+        
         if (!isRotating)
         {
+           
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
                 StartCoroutine(RotateAndWait(90.0f));
+                x++;
+                Debug.Log(x);
+
+                if (x % 2 == 0) {
+                    transform.position += new Vector3(2f,-0.5f, 0);
+                    x = 0;
+                   
+                }
+                else {
+                    transform.position += new Vector3(1f,0.5f, 0);
+                    
+                }
                 //CharacterController. += transform.localScale.z;
             }
             else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
                 StartCoroutine(RotateAndWait(-90.0f));
+                x++;
+                Debug.Log(x);
+
+                if (x % 2 == 0)
+                {
+                    transform.position += new Vector3(-2, -0.5f, 0);
+                    x = 0;
+                }
+                else
+                {
+                    transform.position += new Vector3(-1,0.5f, 0);
+
+                }
             }
+            
         }
 
 
     }
-    private bool isRotating = false;
 
 
     private IEnumerator RotateAndWait(float angle)
     {
         isRotating = true;
-        transform.Rotate(0.0f, 0.0f, angle, Space.World);
-        //transform.position.z += transform.localScale.z;
+        transform.Rotate(0.0f, 0.0f, angle, Space.World);         
         yield return new WaitForSeconds(1f);
         isRotating = false;
+
     }
+
 }
