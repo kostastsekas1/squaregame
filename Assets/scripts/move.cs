@@ -7,7 +7,7 @@ public class move : MonoBehaviour
 {
     private bool isRotating = false;
     private int x = 1;
-    private int y = 1;
+    private int y = 2;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,32 +24,68 @@ public class move : MonoBehaviour
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
                 StartCoroutine(RotateAndWait(90.0f,1));
+
+                if (transform.rotation.z == 0 || transform.rotation.z == 180)
+                {
+                    transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
+                    return;
+                }
+
+                if (transform.position.y == 1)
+                {
+                    transform.position = new Vector3(transform.position.x+ 1.5f, 0.5f, transform.position.z);
+
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x + 1.5f, 1f, transform.position.z);
+                }
+
+                /*
                 x++;
-                y++;
                 Debug.Log(x);
 
                 if (x % 2 == 0) {
                     transform.position += new Vector3(1.5f,-0.5f, 0);
                     x = 0;
-                    y= 0;
-                   
+                    
                 }
                 else {
                     transform.position += new Vector3(1.5f,0.5f, 0);
                     
                 }
+                */
             }
             else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
                 StartCoroutine(RotateAndWait(-90.0f,1));
+                if (transform.rotation.x == 90 || transform.rotation.x == -90) 
+                {
+                    transform.position = new Vector3(transform.position.x - 1.5f, transform.position.y, transform.position.z);
+                    return;
+                }
+
+
+
+                if (transform.position.y == 1)
+                {
+                    transform.position = new Vector3(transform.position.x- 1.5f, 0.5f, transform.position.z);
+                    
+
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x - 1.5f, 1f, transform.position.z);
+                    
+                }
+                /*
                 x++;
-                y++;
+                
                 Debug.Log(x);
 
                 if (x % 2 == 0)
                 {
                     transform.position += new Vector3(-1.5f, -0.5f, 0);
-                    y= 0;
                     x = 0;
                 }
                 else
@@ -57,31 +93,63 @@ public class move : MonoBehaviour
                     transform.position += new Vector3(-1.5f,0.5f, 0);
 
                 }
+                */
             }
             else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             {
                 StartCoroutine(RotateAndWait(90.0f, 2));
-                x++;
-                y++;
+
+                Debug.Log("x in x:" + x);
+
+                if (transform.rotation.x == 0 || transform.rotation.x == 180)
+                {
+                    transform.position = new Vector3(transform.position.x , transform.position.y, transform.position.z+1.5f );
+                    return;
+                }
+
+                if (transform.position.y == 1)
+                {
+                    transform.position = new Vector3(transform.position.x , 0.5f, transform.position.z+ 1.5f);
+                    
+
+                }
+                else if (transform.position.y == 1)
+                {
+
+                    transform.position = new Vector3(transform.position.x, 1f, transform.position.z+ 1.5f);
+                    x = 2;  
+                }
                 
+
+                /*
                 Debug.Log("x in x:"+x);
 
-                if (y % 2 == 0)
+                if (x % 2 == 0)
                 {
-                    transform.position += new Vector3(0, -0.5f, 1.5f);
-                    y= 0;
-                    x = 0;
+                    transform.position += new Vector3(0, 0, 1.5f);
                 }
                 else
                 {
-                    transform.position += new Vector3(0, 0.5f, 1.5f);
+                    if (y % 2 == 0)
+                    {
+                        transform.position += new Vector3(0, -0.5f, 1.5f);
+                        y = 1;
+                       
+                    }
+                    else
+                    {
+                        transform.position += new Vector3(0, +0.5f, 1.5f);
+                        y++;
+                    }
+                   
 
                 }
+                */
             }
+            /*
             else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
             {
                 StartCoroutine(RotateAndWait(90.0f, 2));
-                x++;
                 y++;
                 Debug.Log(y);
                 if (y % 2 == 0)
@@ -95,6 +163,7 @@ public class move : MonoBehaviour
 
                 }
             }
+            */
         }
 
 
@@ -112,7 +181,8 @@ public class move : MonoBehaviour
         {
             transform.Rotate(angle, 0.0f,0.0f , Space.World);
         }
-                 
+        
+        
         yield return new WaitForSeconds(1f);
         isRotating = false;
 
