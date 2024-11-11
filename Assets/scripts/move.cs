@@ -170,18 +170,17 @@ public class move : MonoBehaviour
     }
 
 
-    private IEnumerator RotateAndWait(float angle,int axis)
+    private IEnumerator RotateAndWait(float angle, int axis)
     {
         isRotating = true;
-        if (axis == 1) 
+        if (axis == 1)
         {
             transform.Rotate(0.0f, 0.0f, angle, Space.World);
         }
-        else if (axis==2) 
+        else if (axis == 2)
         {
-            transform.Rotate(angle, 0.0f,0.0f , Space.World);
+            transform.Rotate(angle, 0.0f, 0.0f, Space.World);
         }
-        
         
         yield return new WaitForSeconds(1f);
         isRotating = false;
