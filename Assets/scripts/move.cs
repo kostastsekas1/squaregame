@@ -1,13 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class move : MonoBehaviour
 {
     private bool isRotating = false;
     private int x = 1;
     private int y = 2;
+    public BoxCollider col;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,55 +20,19 @@ public class move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         if (!isRotating)
         {
            
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
-                StartCoroutine(RotateAndWait(90.0f,1));
 
-                if (transform.rotation.z == 0 || transform.rotation.z == 180)
-                {
-                    transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
-                    return;
-                }
+                transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
 
-                if (transform.position.y == 1)
-                {
-                    transform.position = new Vector3(transform.position.x+ 1.5f, 0.5f, transform.position.z);
+                StartCoroutine(RotateAndWait(90.0f, 1));
 
-                }
-                else
-                {
-                    transform.position = new Vector3(transform.position.x + 1.5f, 1f, transform.position.z);
-                }
-
-                /*
-                x++;
-                Debug.Log(x);
-
-                if (x % 2 == 0) {
-                    transform.position += new Vector3(1.5f,-0.5f, 0);
-                    x = 0;
-                    
-                }
-                else {
-                    transform.position += new Vector3(1.5f,0.5f, 0);
-                    
-                }
-                */
             }
             else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
-                StartCoroutine(RotateAndWait(-90.0f,1));
-                if (transform.rotation.x == 90 || transform.rotation.x == -90) 
-                {
-                    transform.position = new Vector3(transform.position.x - 1.5f, transform.position.y, transform.position.z);
-                    return;
-                }
-
-
 
                 if (transform.position.y == 1)
                 {
@@ -78,75 +45,32 @@ public class move : MonoBehaviour
                     transform.position = new Vector3(transform.position.x - 1.5f, 1f, transform.position.z);
                     
                 }
-                /*
-                x++;
-                
-                Debug.Log(x);
+                StartCoroutine(RotateAndWait(-90.0f, 1));
 
-                if (x % 2 == 0)
-                {
-                    transform.position += new Vector3(-1.5f, -0.5f, 0);
-                    x = 0;
-                }
-                else
-                {
-                    transform.position += new Vector3(-1.5f,0.5f, 0);
 
-                }
-                */
             }
             else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             {
-                StartCoroutine(RotateAndWait(90.0f, 2));
 
-                Debug.Log("x in x:" + x);
+                Debug.Log(transform.rotation.eulerAngles);
 
-                if (transform.rotation.x == 0 || transform.rotation.x == 180)
-                {
-                    transform.position = new Vector3(transform.position.x , transform.position.y, transform.position.z+1.5f );
-                    return;
-                }
-
+                
                 if (transform.position.y == 1)
                 {
                     transform.position = new Vector3(transform.position.x , 0.5f, transform.position.z+ 1.5f);
                     
 
                 }
-                else if (transform.position.y == 1)
+                else
                 {
 
                     transform.position = new Vector3(transform.position.x, 1f, transform.position.z+ 1.5f);
-                    x = 2;  
+                     
                 }
-                
 
-                /*
-                Debug.Log("x in x:"+x);
+                StartCoroutine(RotateAndWait(90.0f, 2));
 
-                if (x % 2 == 0)
-                {
-                    transform.position += new Vector3(0, 0, 1.5f);
-                }
-                else
-                {
-                    if (y % 2 == 0)
-                    {
-                        transform.position += new Vector3(0, -0.5f, 1.5f);
-                        y = 1;
-                       
-                    }
-                    else
-                    {
-                        transform.position += new Vector3(0, +0.5f, 1.5f);
-                        y++;
-                    }
-                   
-
-                }
-                */
             }
-            /*
             else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
             {
                 StartCoroutine(RotateAndWait(90.0f, 2));
@@ -159,13 +83,47 @@ public class move : MonoBehaviour
                 }
                 else
                 {
-                    transform.position += new Vector3(0,0.5f, -1.5f);
+                    transform.position += new Vector3(0, 0.5f, -1.5f);
 
                 }
             }
-            */
         }
 
+       
+
+        var yHalfExtents = col.bounds.extents.y;
+        //get the center
+        var yCenter = col.bounds.center.y;
+        //get the up border
+        //get the lower border
+        float yLower = yCenter - yHalfExtents;
+
+
+        Debug.Log("Lower border: " + yLower);
+
+
+        if (yLower < 0f)
+        {
+            yLower = 0f;
+        }
+
+
+        Ray ray = new Ray(transform.position, Vector3.down);
+        RaycastHit hitData;
+        var raycasthit = Physics.Raycast(ray,out hitData,3);
+
+
+        Debug.DrawRay(transform.position, Vector3.down, Color.green);
+
+        if (!raycasthit) 
+        {
+            return;
+        }
+
+
+        var offset =  hitData.distance -yHalfExtents;
+
+        transform.position = new Vector3(transform.position.x, transform.position.y -offset, transform.position.z);
 
     }
 
@@ -181,10 +139,45 @@ public class move : MonoBehaviour
         {
             transform.Rotate(angle, 0.0f, 0.0f, Space.World);
         }
+
+        /*
+        //get the extents
+        var yHalfExtents = col.bounds.extents.y;
+        //get the center
+        var yCenter = col.bounds.center.y;
+        //get the up border
+        //get the lower border
+        float yLower = transform.position.y - yHalfExtents;
+
+
+        Debug.Log("Lower border: " + yLower);
+
+
         
+
+
+        /*
+        if (transform.position.y -(transform.position.y- yLower) > 0.1f  )
+        {
+            Debug.Log(yUpper);
+
+
+            transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+
+        }
+        else if( yLower < 1f)
+        {
+            transform.position = new Vector3(transform.position.x, Math.Abs(0.5f + transform.position.y ), transform.position.z);
+
+        }
+        */
+
         yield return new WaitForSeconds(1f);
         isRotating = false;
 
     }
 
+  
+    
+   
 }
