@@ -5,44 +5,129 @@ using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class move : MonoBehaviour
+public class move2 : MonoBehaviour
 {
     private bool isRotating = false;
-    private int x = 1;
-    private int y = 2;
     public BoxCollider col;
+    private bool isstanding = true;
+    private int dir = 0;
 
 
     void Update()
     {
         if (!isRotating)
         {
-           
+
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
+                if (isstanding == true && dir == 0)
+                {
+                    dir = 2;
+                }
+                else if (isstanding == false && dir == 2)
+                {
+                    dir = 0;
+                }
+                if (dir == 0)
+                {
+                    transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
 
-                transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
+                }
+                else if (dir == 2)
+                {
+                    transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
 
+                }
+                else if (dir == 1)
+                {
+                    transform.position = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
+
+                }
                 StartCoroutine(RotateAndWait(90.0f, 1));
             }
             else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
 
-                transform.position = new Vector3(transform.position.x - 1.5f, transform.position.y, transform.position.z);
+                if (isstanding == true && dir == 0)
+                {
+                    dir = 2;
+                }
+                else if (isstanding == false && dir == 2)
+                {
+                    dir = 0;
+                }
+                if (dir == 0)
+                {
+                    transform.position = new Vector3(transform.position.x - 1.5f, transform.position.y, transform.position.z);
+
+                }
+                else if (dir == 2)
+                {
+                    transform.position = new Vector3(transform.position.x - 1.5f, transform.position.y, transform.position.z);
+
+                }
+                else if (dir == 1)
+                {
+                    transform.position = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
+
+                }
 
                 StartCoroutine(RotateAndWait(-90.0f, 1));
             }
             else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             {
-                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1.5f);
+                if (isstanding == true && dir == 0)
+                {
+                    dir = 1;
+                }
+                else if (isstanding == false && dir == 1)
+                {
+                    dir = 0;
+                }
+                if (dir == 0)
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1.5f);
+
+                }
+                else if (dir == 1)
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1.5f);
+
+                }
+                else if (dir == 2)
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
+
+                }
                 StartCoroutine(RotateAndWait(90.0f, 2));
 
             }
             else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
             {
-                StartCoroutine(RotateAndWait(90.0f, 2));
-                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1.5f);
+                if (isstanding == true && dir == 0)
+                {
+                    dir = 1;
+                }
+                else if (isstanding == false && dir == 1)
+                {
+                    dir = 0;
+                }
+                if (dir == 0)
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1.5f);
 
+                }
+                else if (dir == 1)
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1.5f);
+
+                }
+                else if (dir == 2)
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
+
+                }
+                StartCoroutine(RotateAndWait(90.0f, 2));
             }
         }
 
@@ -52,35 +137,20 @@ public class move : MonoBehaviour
 
         Ray ray = new Ray(transform.position, Vector3.down);
         RaycastHit hitData;
-        var raycasthit = Physics.Raycast(ray,out hitData,3);
+        var raycasthit = Physics.Raycast(ray, out hitData, 3);
 
 
         Debug.DrawRay(transform.position, Vector3.down, Color.green);
 
-        if (!raycasthit) 
+        if (!raycasthit)
         {
             return;
         }
 
-        var offset =  hitData.distance -yHalfExtents;
+        var offset = hitData.distance - yHalfExtents;
 
-        transform.position = new Vector3(transform.position.x, transform.position.y -offset, transform.position.z);
-    }
+        transform.position = new Vector3(transform.position.x, transform.position.y - offset, transform.position.z);
 
-    private IEnumerator RotateAndWait(float angle, int axis)
-    {
-        isRotating = true;
-        if (axis == 1)
+        if (transform.position.y > 0.6f)
         {
-            transform.Rotate(0.0f, 0.0f, angle, Space.World);
-        }
-        else if (axis == 2)
-        {
-            transform.Rotate(angle, 0.0f, 0.0f, Space.World);
-        }
-
-        yield return new WaitForSeconds(1f);
-        isRotating = false;
-
-    }
-}
+  
