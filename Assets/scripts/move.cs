@@ -154,3 +154,34 @@ public class move2 : MonoBehaviour
         if (transform.position.y > 0.6f)
         {
   
+            isstanding = true;
+
+        }
+        else
+        {
+            isstanding = false;
+        }
+
+    }
+
+    private IEnumerator RotateAndWait(float angle, int axis)
+    {
+        isRotating = true;
+        if (axis == 1)
+        {
+            transform.Rotate(0.0f, 0.0f, angle, Space.World);
+        }
+        else if (axis == 2)
+        {
+            transform.Rotate(angle, 0.0f, 0.0f, Space.World);
+        }
+
+ 
+       
+
+
+        yield return new WaitForSeconds(1f);
+        isRotating = false;
+
+    }
+}
