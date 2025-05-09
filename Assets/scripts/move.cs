@@ -1,167 +1,107 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class move2 : MonoBehaviour
+public class Move : MonoBehaviour
 {
     private bool isRotating = false;
     public BoxCollider col;
     private bool isstanding = true;
     private int dir = 0;
 
-
     void Update()
     {
         if (!isRotating)
         {
-
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
-                if (isstanding == true && dir == 0)
-                {
-                    dir = 2;
-                }
-                else if (isstanding == false && dir == 2)
-                {
-                    dir = 0;
-                }
-                if (dir == 0)
-                {
-                    transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
+                CheckDirection(2);
+                MoveCube(true, 1);
 
-                }
-                else if (dir == 2)
-                {
-                    transform.position = new Vector3(transform.position.x + 1.5f, transform.position.y, transform.position.z);
-
-                }
-                else if (dir == 1)
-                {
-                    transform.position = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
-
-                }
                 StartCoroutine(RotateAndWait(90.0f, 1));
             }
             else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
 
-                if (isstanding == true && dir == 0)
-                {
-                    dir = 2;
-                }
-                else if (isstanding == false && dir == 2)
-                {
-                    dir = 0;
-                }
-                if (dir == 0)
-                {
-                    transform.position = new Vector3(transform.position.x - 1.5f, transform.position.y, transform.position.z);
-
-                }
-                else if (dir == 2)
-                {
-                    transform.position = new Vector3(transform.position.x - 1.5f, transform.position.y, transform.position.z);
-
-                }
-                else if (dir == 1)
-                {
-                    transform.position = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
-
-                }
+                CheckDirection(2);
+                MoveCube(true, -1);
 
                 StartCoroutine(RotateAndWait(-90.0f, 1));
             }
             else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             {
-                if (isstanding == true && dir == 0)
-                {
-                    dir = 1;
-                }
-                else if (isstanding == false && dir == 1)
-                {
-                    dir = 0;
-                }
-                if (dir == 0)
-                {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1.5f);
+                CheckDirection(1);
+                MoveCube(false, 1);
 
-                }
-                else if (dir == 1)
-                {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1.5f);
-
-                }
-                else if (dir == 2)
-                {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
-
-                }
                 StartCoroutine(RotateAndWait(90.0f, 2));
 
             }
             else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
             {
-                if (isstanding == true && dir == 0)
-                {
-                    dir = 1;
-                }
-                else if (isstanding == false && dir == 1)
-                {
-                    dir = 0;
-                }
-                if (dir == 0)
-                {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1.5f);
+                CheckDirection(1);
+                MoveCube(false, -1);
 
-                }
-                else if (dir == 1)
-                {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1.5f);
-
-                }
-                else if (dir == 2)
-                {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
-
-                }
                 StartCoroutine(RotateAndWait(90.0f, 2));
             }
         }
 
-        var yHalfExtents = col.bounds.extents.y;
-        //get the center
-        var yCenter = col.bounds.center.y;
-
+        float yHalfExtents = col.bounds.extents.y;
         Ray ray = new Ray(transform.position, Vector3.down);
-        RaycastHit hitData;
-        var raycasthit = Physics.Raycast(ray, out hitData, 3);
-
-
-        Debug.DrawRay(transform.position, Vector3.down, Color.green);
-
+        bool raycasthit = Physics.Raycast(ray, out RaycastHit hitData, 30);
+        
         if (!raycasthit)
         {
             return;
         }
 
-        var offset = hitData.distance - yHalfExtents;
-
+        float offset = hitData.distance - yHalfExtents;
         transform.position = new Vector3(transform.position.x, transform.position.y - offset, transform.position.z);
 
-        if (transform.position.y > 0.6f)
+        float GroundHeight = Mathf.Round(hitData.point.y * 10000f) / 10000f;
+        if (transform.position.y > GroundHeight + 0.6f)
         {
-  
             isstanding = true;
-
         }
         else
         {
             isstanding = false;
         }
+    }
+    private void MoveCube(bool movingleftright, int sign)
+    {
+        if (movingleftright)
+        {
+            if (dir == 0 || dir == 2)
+            {
+                transform.position = new Vector3(transform.position.x + sign * 1.5f, transform.position.y, transform.position.z);
+            }
+            else if (dir == 1)
+            {
+                transform.position = new Vector3(transform.position.x + sign * 1f, transform.position.y, transform.position.z);
+            }
+        }
+        else
+        {
+            if (dir == 0 || dir == 1)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + sign * 1.5f);
+            }
+            else if (dir == 2)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + sign * 1f);
+            }
+        }
+    }
 
+    private void CheckDirection(int dircheck)
+    {
+        if (isstanding == true && dir == 0)
+        {
+            dir = dircheck;
+        }
+        else if (isstanding == false && dir == dircheck)
+        {
+            dir = 0;
+        }
     }
 
     private IEnumerator RotateAndWait(float angle, int axis)
@@ -175,13 +115,7 @@ public class move2 : MonoBehaviour
         {
             transform.Rotate(angle, 0.0f, 0.0f, Space.World);
         }
-
- 
-       
-
-
         yield return new WaitForSeconds(1f);
         isRotating = false;
-
     }
 }
